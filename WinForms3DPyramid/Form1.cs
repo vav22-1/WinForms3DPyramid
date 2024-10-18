@@ -12,9 +12,18 @@ namespace WinForms3DPyramid
 {
     public partial class Form1 : Form
     {
+        private Pyramid pyramid;
+
         public Form1()
         {
             InitializeComponent();
+            pyramid = new Pyramid(600);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            pyramid.Draw(e.Graphics, this.ClientSize);
         }
     }
 }
