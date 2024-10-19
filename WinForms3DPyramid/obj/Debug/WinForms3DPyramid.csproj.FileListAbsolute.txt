@@ -7,4 +7,4 @@ C:\Users\nikyu\Documents\GitHub\WinForms3DPyramid\WinForms3DPyramid\obj\Debug\Wi
 C:\Users\nikyu\Documents\GitHub\WinForms3DPyramid\WinForms3DPyramid\obj\Debug\WinForms3DPyramid.csproj.CoreCompileInputs.cache
 C:\Users\nikyu\Documents\GitHub\WinForms3DPyramid\WinForms3DPyramid\obj\Debug\WinForms3DPyramid.exe
 C:\Users\nikyu\Documents\GitHub\WinForms3DPyramid\WinForms3DPyramid\obj\Debug\WinForms3DPyramid.pdb
-C:\Users\nikyu\Documents\GitHub\WinForms3DPyramid\WinForms3DPyramid\obj\Debug\WinForms3DPyramid.Form1.resources
+C:\Users\nikyu\Documents\GitHub\WinForms3DPyramid\WinForms3DPyramid\obj\Debug\WinForms3DPyramid.MainForm.resources

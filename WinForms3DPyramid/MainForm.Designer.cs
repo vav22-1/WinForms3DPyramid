@@ -1,6 +1,6 @@
 ﻿namespace WinForms3DPyramid
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Обязательная переменная конструктора.
@@ -28,20 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.DrawPyramidPanel = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // Form1
+            // DrawPyramidPanel
+            // 
+            this.DrawPyramidPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.DrawPyramidPanel.Location = new System.Drawing.Point(200, 30);
+            this.DrawPyramidPanel.Name = "DrawPyramidPanel";
+            this.DrawPyramidPanel.Size = new System.Drawing.Size(600, 400);
+            this.DrawPyramidPanel.TabIndex = 0;
+            this.DrawPyramidPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawPyramidPanel_Paint);
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.ClientSize = new System.Drawing.Size(984, 561);
+            this.Controls.Add(this.DrawPyramidPanel);
+            this.Name = "MainForm";
+            this.Text = "MainForm";
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Panel DrawPyramidPanel;
     }
 }
 

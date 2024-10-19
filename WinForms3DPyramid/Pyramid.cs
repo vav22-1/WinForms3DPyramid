@@ -11,19 +11,26 @@ namespace WinForms3DPyramid
     {
         private PointF[] vertices;
         private float[][] points3D;
-        private float distance;
+        private float distance = 600;
 
-        public Pyramid(float distance)
+        public Pyramid(float scale = 1f)
         {
-            this.distance = distance;
-            points3D = new float[5][] {
+            float[][] basePoints3D = new float[5][] {
                 new float[] { 0, 100, 100 },
                 new float[] { -100, -100, 100 },
                 new float[] { 100, -100, 100 },
                 new float[] { 100, -100, -100 },
-                new float[] { -100, -100, -100 }
+                new float[] { -100, -100, -100 },
             };
-
+            points3D = new float[5][];
+            for(int i =  0; i < basePoints3D.Length; i++)
+            {
+                points3D[i] = new float[3];
+                for(int j = 0;j < basePoints3D[i].Length;j++)
+                {
+                    points3D[i][j] = basePoints3D[i][j] * scale;
+                }
+            }
             vertices = new PointF[5];
         }
 
@@ -50,6 +57,14 @@ namespace WinForms3DPyramid
             g.DrawLine(Pens.Black, vertices[2], vertices[3]);
             g.DrawLine(Pens.Black, vertices[3], vertices[4]);
             g.DrawLine(Pens.Black, vertices[4], vertices[1]);
+        }
+        public void ConnectVertices(Graphics g, Pyramid pyramid)
+        {
+            g.DrawLine(Pens.Black, vertices[0], pyramid.vertices[0]);
+            g.DrawLine(Pens.Black, vertices[1], pyramid.vertices[1]);
+            g.DrawLine(Pens.Black, vertices[2], pyramid.vertices[2]);
+            g.DrawLine(Pens.Black, vertices[3], pyramid.vertices[3]);
+            g.DrawLine(Pens.Black, vertices[4], pyramid.vertices[4]);
         }
     }
 }
