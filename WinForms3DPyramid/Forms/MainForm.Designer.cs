@@ -47,6 +47,7 @@
             this.ClientSize = new System.Drawing.Size(984, 561);
             this.Controls.Add(this.DrawPyramidPanel);
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";
             this.ResumeLayout(false);
 
