@@ -28,34 +28,39 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.DrawPyramidPanel = new System.Windows.Forms.Panel();
+            this.drawPyramidPanel = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // DrawPyramidPanel
+            // drawPyramidPanel
             // 
-            this.DrawPyramidPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.DrawPyramidPanel.Location = new System.Drawing.Point(200, 30);
-            this.DrawPyramidPanel.Name = "DrawPyramidPanel";
-            this.DrawPyramidPanel.Size = new System.Drawing.Size(600, 400);
-            this.DrawPyramidPanel.TabIndex = 0;
-            this.DrawPyramidPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawPyramidPanel_Paint);
+            this.drawPyramidPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.drawPyramidPanel.Location = new System.Drawing.Point(12, 12);
+            this.drawPyramidPanel.Name = "drawPyramidPanel";
+            this.drawPyramidPanel.Size = new System.Drawing.Size(810, 470);
+            this.drawPyramidPanel.TabIndex = 0;
+            this.drawPyramidPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawPyramidPanel_Paint);
+            this.drawPyramidPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawPyramidPanel_MouseDown);
+            this.drawPyramidPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawPyramidPanel_MouseMove);
+            this.drawPyramidPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawPyramidPanel_MouseUp);
+            this.drawPyramidPanel.Resize += new System.EventHandler(this.DrawPyramidPanel_Resize);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(984, 561);
-            this.Controls.Add(this.DrawPyramidPanel);
+            this.ClientSize = new System.Drawing.Size(834, 561);
+            this.Controls.Add(this.drawPyramidPanel);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";
+            this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Panel DrawPyramidPanel;
+        private System.Windows.Forms.Panel drawPyramidPanel;
     }
 }
 

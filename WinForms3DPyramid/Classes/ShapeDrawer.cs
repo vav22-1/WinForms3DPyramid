@@ -8,7 +8,11 @@ namespace WinForms3DPyramid
         private const float ProjectDistance = 600f;
         //Поле, хранящее размер области для рисования
         private static Size drawPanelSize;
-
+        private static Size baseDrawPanelSize;
+        public static void SetBaseClientSize(Size size)
+        {
+            baseDrawPanelSize = size;
+        }
         public static void SetClientSize(Size size)
         {
             drawPanelSize = size;
@@ -19,9 +23,11 @@ namespace WinForms3DPyramid
         {
             //Учет перспективного сокращения
             float projectFactor = ProjectDistance / (ProjectDistance + z);
-            //Преобразование координат с учетом проекции
-            float projectedX = x * projectFactor;
-            float projectedY = -y * projectFactor;
+            float widthChangeeFactor = (float) drawPanelSize.Width / baseDrawPanelSize.Width;
+            float heightChangeeFactor = (float) drawPanelSize.Height / baseDrawPanelSize.Height;
+            //Преобразование координат с учетом проекции и изменения размера формы
+            float projectedX = x * projectFactor * widthChangeeFactor;
+            float projectedY = -y * projectFactor * heightChangeeFactor;
 
             return new PointF(projectedX, projectedY);
         }
