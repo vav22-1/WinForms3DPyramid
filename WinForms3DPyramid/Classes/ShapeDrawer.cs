@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Threading.Tasks;
 
 namespace WinForms3DPyramid
 {
@@ -81,6 +83,63 @@ namespace WinForms3DPyramid
             DrawPyramid(g, pyramidOne, Pens.Black);
             DrawPyramid(g, pyramidTwo, Pens.Red);
             ConnectVertices(g, pyramidOne, pyramidTwo, Pens.BlueViolet);
+        }
+
+        //Метод поворота пирамиды по оси X с помощью матрицы поворота
+        public static void RotatePyramidX(Pyramid pyramid, float angle)
+        {
+            float[][] points = pyramid.GetPoints();
+            float radians = angle * (float)Math.PI / 180f;
+            float cosTheta = (float)Math.Cos(radians);
+            float sinTheta = (float)Math.Sin(radians);
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                float x = points[i][0];
+                float y = points[i][1];
+                float z = points[i][2];
+
+                points[i][1] = y * cosTheta - z * sinTheta;
+                points[i][2] = y * sinTheta + z * cosTheta;
+            }
+        }
+
+        //Метод поворота пирамиды по оси Y с помощью матрицы поворота
+        public static void RotatePyramidY(Pyramid pyramid, float angle)
+        {
+            float[][] points = pyramid.GetPoints();
+            float radians = angle * (float)Math.PI / 180f;
+            float cosTheta = (float)Math.Cos(radians);
+            float sinTheta = (float)Math.Sin(radians);
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                float x = points[i][0];
+                float y = points[i][1];
+                float z = points[i][2];
+
+                points[i][0] = x * cosTheta + z * sinTheta;
+                points[i][2] = -x * sinTheta + z * cosTheta;
+            }
+        }
+
+        //Метод поворота пирамиды по оси Z с помощью матрицы поворота
+        public static void RotatePyramidZ(Pyramid pyramid, float angle)
+        {
+            float[][] points = pyramid.GetPoints();
+            float radians = angle * (float)Math.PI / 180f;
+            float cosTheta = (float)Math.Cos(radians);
+            float sinTheta = (float)Math.Sin(radians);
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                float x = points[i][0];
+                float y = points[i][1];
+                float z = points[i][2];
+
+                points[i][0] = x * cosTheta - y * sinTheta;
+                points[i][1] = x * sinTheta + y * cosTheta;
+            }
         }
     }
 }

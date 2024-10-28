@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using WinForms3DPyramid;
 
 namespace WinForms3DPyramid
 {
@@ -15,10 +16,10 @@ namespace WinForms3DPyramid
         //Переменная коэффициента приближения
         private float zoomFactor = 1f;
 
-        //Переменная, показывающая, зажал ли пользователь клавишу мыши внутри элемента DrawPyramidPanel 
+        //Переменная, показывающая, зажал ли пользователь клавишу мыши внутри элемента drawPyramidPanel 
         private bool isMouseMovePyramid = false;
 
-        //Переменная, хранящая последнее положение мыши в момент, когда пользователь нажал клавишу мыши внутри DrawPyramidPanel
+        //Переменная, хранящая последнее положение мыши в момент, когда пользователь нажал клавишу мыши внутри drawPyramidPanel
         private PointF lastMousePosition;
 
         //Переменная, хранящая изменение положения мыши внутри элемента drawPyramidPanel
@@ -28,22 +29,25 @@ namespace WinForms3DPyramid
         {
             InitializeComponent();
             baseFormSize = this.Size;
+            this.KeyPreview = true;
 
             //Словарь для всех элементов формы, которые должны менять свой размер при изменении размера формы
             elementsToScale = new Dictionary<Control, (int width, int height)>
             {
-                {drawPyramidPanel, (drawPyramidPanel.Width, drawPyramidPanel.Height) }
+                {drawPyramidPanel, (drawPyramidPanel.Width, drawPyramidPanel.Height)}
             };
 
             //Создание двух объектов пирамид
             pyramid = new Pyramid();
             smallPyramid = new Pyramid(0.5f);
 
-            //Передача в статические класс ShapeDrawer базовый размер элемента Panel под названием DrawPyramidPanel
+            //Передача в статические класс ShapeDrawer базовый размер элемента Panel под названием drawPyramidPanel
             ShapeDrawer.SetBaseClientSize(drawPyramidPanel.ClientSize);
 
             //Создание обработчика события прокрутки колёсика мыши
             drawPyramidPanel.MouseWheel += DrawPyramidPanel_MouseWheel;
+
+            this.KeyDown += MainForm_KeyDown;
 
         }
 
@@ -52,7 +56,7 @@ namespace WinForms3DPyramid
             //Обновление размера окна
             ShapeDrawer.SetClientSize(drawPyramidPanel.ClientSize);
 
-            //Перемещение изображения внутри элемента DrawPyramidPanel
+            //Перемещение изображения внутри элемента drawPyramidPanel
             e.Graphics.TranslateTransform(newMousePosition.X, newMousePosition.Y);
 
             //Масштабирование изображения с помощью переменной zoomFactor
@@ -65,12 +69,12 @@ namespace WinForms3DPyramid
         //Обработка события прокрутки колёсика мыши для изменения зума
         private void DrawPyramidPanel_MouseWheel(object sender, MouseEventArgs e)
         {
-            if(e.Delta>0)
+            if (e.Delta > 0)
             {
                 //Ограничение максимального зума
                 zoomFactor = Math.Min(2f, zoomFactor + 0.05f);
             }
-            else 
+            else
             {
                 //Огранические минимального зума
                 zoomFactor = Math.Max(0.05f, zoomFactor - 0.05f);
@@ -78,7 +82,7 @@ namespace WinForms3DPyramid
             drawPyramidPanel.Invalidate();
         }
 
-        //Метод срабатывающий при изменении размера DrawPyramidPanel для перерисовки пирамид
+        //Метод срабатывающий при изменении размера drawPyramidPanel для перерисовки пирамид
         private void DrawPyramidPanel_Resize(object sender, System.EventArgs e)
         {
             drawPyramidPanel.Invalidate();
@@ -122,7 +126,7 @@ namespace WinForms3DPyramid
         private void MainForm_Resize(object sender, EventArgs e)
         {
             ScaleELements();
-        } 
+        }
 
         //Метод для скалирования размеров элементов формы относительно изменения размеров самой формы
         private void ScaleELements()
@@ -134,6 +138,25 @@ namespace WinForms3DPyramid
                 control.Key.Width = (int)(control.Value.elementWidth * widthRatio);
                 control.Key.Height = (int)(control.Value.elementHeight * heightRatio);
             }
+        }
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.X:
+                    ShapeDrawer.RotatePyramidX(pyramid, 1f);
+                    ShapeDrawer.RotatePyramidX(smallPyramid, 1f);
+                    break;
+                case Keys.Y:
+                    ShapeDrawer.RotatePyramidY(pyramid, 1f);
+                    ShapeDrawer.RotatePyramidY(smallPyramid, 1f);
+                    break;
+                case Keys.Z:
+                    ShapeDrawer.RotatePyramidZ(pyramid, 1f);
+                    ShapeDrawer.RotatePyramidZ(smallPyramid, 1f);
+                    break;
+            }
+            drawPyramidPanel.Invalidate();
         }
     }
 }

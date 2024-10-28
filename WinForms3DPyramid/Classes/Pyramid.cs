@@ -6,13 +6,13 @@ namespace WinForms3DPyramid
     public class Pyramid
     {
         //Поле, хранящее массив точек вершин пирамиды
-        private readonly float[][] points3D;
+        private float[][] points3D;
         
         public Pyramid(float scale = 1f)
         {
             float[][] basePoints3D = new float[5][] {
                 //Общая вершина пирамиды
-                new float[] { 0, 150, 100 },
+                new float[] { 0, 100, 0 },
                 //Вершины основания пирамиды
                 new float[] { -100, -100, 100 },
                 new float[] { 100, -100, 100 },
