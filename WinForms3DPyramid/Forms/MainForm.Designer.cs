@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.drawPyramidPanel = new System.Windows.Forms.Panel();
+            this.drawPyramidPanel = new WinForms3DPyramid.DoubleBufferedPanel();
             this.SuspendLayout();
             // 
             // drawPyramidPanel

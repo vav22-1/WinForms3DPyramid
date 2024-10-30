@@ -25,8 +25,8 @@ namespace WinForms3DPyramid
         {
             //Учет перспективного сокращения
             float projectFactor = ProjectDistance / (ProjectDistance + z);
-            float widthChangeeFactor = (float) drawPanelSize.Width / baseDrawPanelSize.Width;
-            float heightChangeeFactor = (float) drawPanelSize.Height / baseDrawPanelSize.Height;
+            float widthChangeeFactor = (float)drawPanelSize.Width / baseDrawPanelSize.Width;
+            float heightChangeeFactor = (float)drawPanelSize.Height / baseDrawPanelSize.Height;
             //Преобразование координат с учетом проекции и изменения размера формы
             float projectedX = x * projectFactor * widthChangeeFactor;
             float projectedY = -y * projectFactor * heightChangeeFactor;
@@ -86,7 +86,7 @@ namespace WinForms3DPyramid
         }
 
         //Метод поворота пирамиды по оси X с помощью матрицы поворота
-        public static void RotatePyramidX(Pyramid pyramid, float angle)
+        private static void RotatePyramidX(Pyramid pyramid, float angle)
         {
             float[][] points = pyramid.GetPoints();
             float radians = angle * (float)Math.PI / 180f;
@@ -95,7 +95,6 @@ namespace WinForms3DPyramid
 
             for (int i = 0; i < points.Length; i++)
             {
-                float x = points[i][0];
                 float y = points[i][1];
                 float z = points[i][2];
 
@@ -105,7 +104,7 @@ namespace WinForms3DPyramid
         }
 
         //Метод поворота пирамиды по оси Y с помощью матрицы поворота
-        public static void RotatePyramidY(Pyramid pyramid, float angle)
+        private static void RotatePyramidY(Pyramid pyramid, float angle)
         {
             float[][] points = pyramid.GetPoints();
             float radians = angle * (float)Math.PI / 180f;
@@ -115,7 +114,6 @@ namespace WinForms3DPyramid
             for (int i = 0; i < points.Length; i++)
             {
                 float x = points[i][0];
-                float y = points[i][1];
                 float z = points[i][2];
 
                 points[i][0] = x * cosTheta + z * sinTheta;
@@ -124,7 +122,7 @@ namespace WinForms3DPyramid
         }
 
         //Метод поворота пирамиды по оси Z с помощью матрицы поворота
-        public static void RotatePyramidZ(Pyramid pyramid, float angle)
+        private static void RotatePyramidZ(Pyramid pyramid, float angle)
         {
             float[][] points = pyramid.GetPoints();
             float radians = angle * (float)Math.PI / 180f;
@@ -135,11 +133,33 @@ namespace WinForms3DPyramid
             {
                 float x = points[i][0];
                 float y = points[i][1];
-                float z = points[i][2];
 
                 points[i][0] = x * cosTheta - y * sinTheta;
                 points[i][1] = x * sinTheta + y * cosTheta;
             }
+        }
+
+        //Асинхронный метод для поворота всей фигуры по осям
+        public async static Task RotateFigure(Pyramid pyramidOne, Pyramid pyramidTwo, string axis, bool rotateFactor)
+        {
+            await Task.Run(() =>
+            {
+                switch (axis)
+                {
+                    case "X":
+                        RotatePyramidX(pyramidOne, rotateFactor ? 1f : -1f);
+                        RotatePyramidX(pyramidTwo, rotateFactor ? 1f : -1f);
+                        break;
+                    case "Y":
+                        RotatePyramidY(pyramidOne, rotateFactor ? 1f : -1f);
+                        RotatePyramidY(pyramidTwo, rotateFactor ? 1f : -1f);
+                        break;
+                    case "Z":
+                        RotatePyramidZ(pyramidOne, rotateFactor ? 1f : -1f);
+                        RotatePyramidZ(pyramidTwo, rotateFactor ? 1f : -1f);
+                        break;
+                }
+            });
         }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net.Configuration;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using WinForms3DPyramid;
 
 namespace WinForms3DPyramid
 {
@@ -25,11 +26,53 @@ namespace WinForms3DPyramid
         //Переменная, хранящая изменение положения мыши внутри элемента drawPyramidPanel
         private PointF newMousePosition;
 
+        //Логическая переменная, хранящее значение, вращается ли фигура на данный момент
+        private bool isFigureRotate = false;
+
+        //Переменная, хранящая интервал таймеров вращения или же скорость вращения
+        private int rotationSpeed = 10;
+
+        //Переменные, определяющие, вращается ли фигура по оси положительно или отрицательно
+        private bool xRotateFactor;
+        private bool yRotateFactor;
+        private bool zRotateFactor;
+
+        //Таймеры вращения фигуры по каждой оси
+        private Timer xRotationTimer;
+        private Timer yRotationTimer;
+        private Timer zRotationTimer;
         public MainForm()
         {
             InitializeComponent();
             baseFormSize = this.Size;
             this.KeyPreview = true;
+
+            //Установка стиля отрисовки формы для предотвращения мерцания фигуры при использовании Invalidate()
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
+            this.UpdateStyles();
+
+            //Определение таймеров вращения фигуры по осям
+            xRotationTimer = new Timer();
+            xRotationTimer.Tick += (s, e) =>
+            {
+                ShapeDrawer.RotateFigure(pyramid, smallPyramid, "X", xRotateFactor);
+                drawPyramidPanel.Invalidate();
+            };
+
+            yRotationTimer = new Timer();
+            yRotationTimer.Tick += (s, e) =>
+            {
+                ShapeDrawer.RotateFigure(pyramid, smallPyramid, "Y", yRotateFactor);
+                drawPyramidPanel.Invalidate();
+            };
+
+            zRotationTimer = new Timer();
+            zRotationTimer.Tick += (s, e) =>
+            {
+                ShapeDrawer.RotateFigure(pyramid, smallPyramid, "Z", zRotateFactor);
+                drawPyramidPanel.Invalidate();
+            };
+            SetTimers();
 
             //Словарь для всех элементов формы, которые должны менять свой размер при изменении размера формы
             elementsToScale = new Dictionary<Control, (int width, int height)>
@@ -48,6 +91,7 @@ namespace WinForms3DPyramid
             drawPyramidPanel.MouseWheel += DrawPyramidPanel_MouseWheel;
 
             this.KeyDown += MainForm_KeyDown;
+            this.KeyUp += MainForm_KeyUp;
 
         }
 
@@ -139,24 +183,77 @@ namespace WinForms3DPyramid
                 control.Key.Height = (int)(control.Value.elementHeight * heightRatio);
             }
         }
+
+        //Событие нажатия клавиши клавиатуры для управления вращением фигуры как по отдельным осям, так и по всем трем одновременно
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
                 case Keys.X:
-                    ShapeDrawer.RotatePyramidX(pyramid, 1f);
-                    ShapeDrawer.RotatePyramidX(smallPyramid, 1f);
+                    if (!xRotationTimer.Enabled) xRotationTimer.Start();
                     break;
                 case Keys.Y:
-                    ShapeDrawer.RotatePyramidY(pyramid, 1f);
-                    ShapeDrawer.RotatePyramidY(smallPyramid, 1f);
+                    if (!yRotationTimer.Enabled) yRotationTimer.Start();
                     break;
                 case Keys.Z:
-                    ShapeDrawer.RotatePyramidZ(pyramid, 1f);
-                    ShapeDrawer.RotatePyramidZ(smallPyramid, 1f);
+                    if (!zRotationTimer.Enabled) zRotationTimer.Start();
+                    break;
+                case Keys.Space:
+                    TimersControl(!isFigureRotate);
                     break;
             }
-            drawPyramidPanel.Invalidate();
+            isFigureRotate = xRotationTimer.Enabled || yRotationTimer.Enabled || zRotationTimer.Enabled;
+        }
+
+        //Событие нажатия клавиши клавиатуры для управления направлением вращения по отдельным осям, а также для увеличения и уменьшения скорости вращения
+        private void MainForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.X:
+                    xRotateFactor = !xRotateFactor;
+                    break;
+                case Keys.Y:
+                    yRotateFactor = !yRotateFactor;
+                    break;
+                case Keys.Z:
+                    zRotateFactor = !zRotateFactor;
+                    break;
+                case Keys.Up:
+                    rotationSpeed = Math.Max(1, Math.Min(rotationSpeed + 10, 100));
+                    SetTimers(rotationSpeed);
+                    break;
+                case Keys.Down:
+                    rotationSpeed = Math.Max(1, Math.Min(rotationSpeed - 10, 100));
+                    SetTimers(rotationSpeed);
+                    break;
+            }
+        }
+
+        //Метод для управления таймерами вращения
+        private void TimersControl(bool control)
+        {
+            if (control)
+            {
+                if (!xRotationTimer.Enabled) xRotationTimer.Start();
+                if (!yRotationTimer.Enabled) yRotationTimer.Start();
+                if (!zRotationTimer.Enabled) zRotationTimer.Start();
+            }
+            else
+            {
+                xRotationTimer.Stop();
+                yRotationTimer.Stop();
+                zRotationTimer.Stop();
+            }
+            isFigureRotate = control;
+        }
+
+        //Метод для установления скорости вращения по осям
+        private void SetTimers(int speed = 10)
+        {
+            xRotationTimer.Interval = speed;
+            yRotationTimer.Interval = speed;
+            zRotationTimer.Interval = speed;
         }
     }
 }
