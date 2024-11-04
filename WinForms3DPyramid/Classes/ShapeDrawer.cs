@@ -11,6 +11,7 @@ namespace WinForms3DPyramid
         //Поле, хранящее размер области для рисования
         private static Size drawPanelSize;
         private static Size baseDrawPanelSize;
+
         public static void SetBaseClientSize(Size size)
         {
             baseDrawPanelSize = size;
@@ -86,7 +87,7 @@ namespace WinForms3DPyramid
         }
 
         //Метод поворота пирамиды по оси X с помощью матрицы поворота
-        private static void RotatePyramidX(Pyramid pyramid, float angle)
+        public static void RotatePyramidX(Pyramid pyramid, float angle)
         {
             float[][] points = pyramid.GetPoints();
             float radians = angle * (float)Math.PI / 180f;
@@ -104,7 +105,7 @@ namespace WinForms3DPyramid
         }
 
         //Метод поворота пирамиды по оси Y с помощью матрицы поворота
-        private static void RotatePyramidY(Pyramid pyramid, float angle)
+        public static void RotatePyramidY(Pyramid pyramid, float angle)
         {
             float[][] points = pyramid.GetPoints();
             float radians = angle * (float)Math.PI / 180f;

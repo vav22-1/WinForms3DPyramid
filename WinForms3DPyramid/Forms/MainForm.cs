@@ -14,6 +14,7 @@ namespace WinForms3DPyramid
         private Size baseFormSize;
         private Dictionary<Control, (int elementWidth, int elementHeight)> elementsToScale;
 
+
         //Переменная коэффициента приближения
         private float zoomFactor = 1f;
 
@@ -41,6 +42,12 @@ namespace WinForms3DPyramid
         private Timer xRotationTimer;
         private Timer yRotationTimer;
         private Timer zRotationTimer;
+
+        //Переменные для поворота фигуры с помощью правой кнопки мыши
+        private bool isRightMouseButtonPressed = false;
+
+        //Переменная для изменения скорости вращения фигуры с помощью мыши
+        private float mouseRotationSpeed = 0.1f;
         public MainForm()
         {
             InitializeComponent();
@@ -134,16 +141,31 @@ namespace WinForms3DPyramid
 
         private void DrawPyramidPanel_MouseDown(object sender, MouseEventArgs e)
         {
-            isMouseMovePyramid = true;
-            lastMousePosition = e.Location;
+            if(e.Button == MouseButtons.Left)
+            {
+                isMouseMovePyramid = true;
+                lastMousePosition = e.Location;
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                isRightMouseButtonPressed = true;
+                lastMousePosition = e.Location;
+            }
         }
 
         private void DrawPyramidPanel_MouseUp(object sender, MouseEventArgs e)
         {
-            isMouseMovePyramid = false;
+            if (e.Button == MouseButtons.Left)
+            {
+                isMouseMovePyramid = false;
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                isRightMouseButtonPressed = false;
+            }
         }
 
-        //Метод для перемещения пирамиды внутри элемента drawPyramidPanel
+        //Метод для перемещения и вращение фигуры внутри элемента drawPyramidPanel при помощи мыши
         private void DrawPyramidPanel_MouseMove(object sender, MouseEventArgs e)
         {
             if (isMouseMovePyramid)
@@ -153,15 +175,29 @@ namespace WinForms3DPyramid
                 newMousePosition.Y += e.Location.Y - lastMousePosition.Y;
 
                 lastMousePosition = e.Location;
-                float drawPanelWidth = drawPyramidPanel.ClientSize.Width;
-                float drawPanelHeight = drawPyramidPanel.ClientSize.Height;
 
-                //Ограничение перемещения, чтобы пользователь не мог переместиться слишком далеко от пирамиды и потерять её
-                float pyramidWidth = 300 * zoomFactor;
-                float pyramidHeight = 225 * zoomFactor;
-                newMousePosition.X = Math.Max(Math.Min(newMousePosition.X, drawPanelWidth - pyramidWidth), -drawPanelWidth);
-                newMousePosition.Y = Math.Max(Math.Min(newMousePosition.Y, drawPanelHeight - pyramidHeight), -drawPanelHeight);
+                //Ограничение перемещения, чтобы пользователь не мог переместиться слишком далеко от фигуры и потерять её
+                float maxOffsetX = (float)drawPyramidPanel.ClientSize.Width / 2;
+                float maxOffsetY = (float)drawPyramidPanel.ClientSize.Height / 2;
+                float moveFactor = 1f + (1f - zoomFactor);
 
+                newMousePosition.X = Math.Max(Math.Min(newMousePosition.X, maxOffsetX * moveFactor), -maxOffsetX * zoomFactor);
+                newMousePosition.Y = Math.Max(Math.Min(newMousePosition.Y, maxOffsetY * moveFactor), -maxOffsetY * zoomFactor);
+                drawPyramidPanel.Invalidate();
+            }
+            else if (isRightMouseButtonPressed)
+            {
+                //Вычисление смещения мыши по осям X и Y
+                float deltaX = e.Location.X - lastMousePosition.X;
+                float deltaY = e.Location.Y - lastMousePosition.Y;
+
+                //Поворот фигуры в зависимости от смещения мыши
+                ShapeDrawer.RotatePyramidX(pyramid, deltaY * mouseRotationSpeed);
+                ShapeDrawer.RotatePyramidY(pyramid, deltaX * mouseRotationSpeed);
+                ShapeDrawer.RotatePyramidX(smallPyramid, deltaY * mouseRotationSpeed);
+                ShapeDrawer.RotatePyramidY(smallPyramid, deltaX * mouseRotationSpeed);
+
+                lastMousePosition = e.Location;
                 drawPyramidPanel.Invalidate();
             }
         }
@@ -189,15 +225,6 @@ namespace WinForms3DPyramid
         {
             switch (e.KeyCode)
             {
-                case Keys.X:
-                    if (!xRotationTimer.Enabled) xRotationTimer.Start();
-                    break;
-                case Keys.Y:
-                    if (!yRotationTimer.Enabled) yRotationTimer.Start();
-                    break;
-                case Keys.Z:
-                    if (!zRotationTimer.Enabled) zRotationTimer.Start();
-                    break;
                 case Keys.Space:
                     TimersControl(!isFigureRotate);
                     break;
@@ -220,11 +247,13 @@ namespace WinForms3DPyramid
                     zRotateFactor = !zRotateFactor;
                     break;
                 case Keys.Up:
-                    rotationSpeed = Math.Max(1, Math.Min(rotationSpeed + 10, 100));
+                    rotationSpeed = Math.Min(rotationSpeed + 10, 100);
+                    mouseRotationSpeed = Math.Min(mouseRotationSpeed + 0.05f, 0.5f);
                     SetTimers(rotationSpeed);
                     break;
                 case Keys.Down:
-                    rotationSpeed = Math.Max(1, Math.Min(rotationSpeed - 10, 100));
+                    rotationSpeed = Math.Max(1, rotationSpeed - 10);
+                    mouseRotationSpeed = Math.Max(0.01f, mouseRotationSpeed - 0.05f);
                     SetTimers(rotationSpeed);
                     break;
             }

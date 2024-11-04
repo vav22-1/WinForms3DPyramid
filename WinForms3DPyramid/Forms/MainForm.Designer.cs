@@ -33,10 +33,12 @@
             // 
             // drawPyramidPanel
             // 
+            this.drawPyramidPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.drawPyramidPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.drawPyramidPanel.Location = new System.Drawing.Point(12, 12);
             this.drawPyramidPanel.Name = "drawPyramidPanel";
-            this.drawPyramidPanel.Size = new System.Drawing.Size(810, 470);
+            this.drawPyramidPanel.Size = new System.Drawing.Size(800, 450);
             this.drawPyramidPanel.TabIndex = 0;
             this.drawPyramidPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawPyramidPanel_Paint);
             this.drawPyramidPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawPyramidPanel_MouseDown);
@@ -60,7 +62,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel drawPyramidPanel;
+        private DoubleBufferedPanel drawPyramidPanel;
     }
 }
 
