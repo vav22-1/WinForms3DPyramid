@@ -28,30 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.drawPyramidPanel = new WinForms3DPyramid.DoubleBufferedPanel();
+            this.drawFigurePanel = new WinForms3DPyramid.DoubleBufferedPanel();
             this.SuspendLayout();
             // 
-            // drawPyramidPanel
+            // drawFigurePanel
             // 
-            this.drawPyramidPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.drawFigurePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.drawPyramidPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.drawPyramidPanel.Location = new System.Drawing.Point(12, 12);
-            this.drawPyramidPanel.Name = "drawPyramidPanel";
-            this.drawPyramidPanel.Size = new System.Drawing.Size(800, 450);
-            this.drawPyramidPanel.TabIndex = 0;
-            this.drawPyramidPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawPyramidPanel_Paint);
-            this.drawPyramidPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawPyramidPanel_MouseDown);
-            this.drawPyramidPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawPyramidPanel_MouseMove);
-            this.drawPyramidPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawPyramidPanel_MouseUp);
-            this.drawPyramidPanel.Resize += new System.EventHandler(this.DrawPyramidPanel_Resize);
+            this.drawFigurePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.drawFigurePanel.Location = new System.Drawing.Point(12, 12);
+            this.drawFigurePanel.Name = "drawFigurePanel";
+            this.drawFigurePanel.Size = new System.Drawing.Size(800, 450);
+            this.drawFigurePanel.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(834, 561);
-            this.Controls.Add(this.drawPyramidPanel);
+            this.Controls.Add(this.drawFigurePanel);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";
@@ -62,7 +57,7 @@
 
         #endregion
 
-        private DoubleBufferedPanel drawPyramidPanel;
+        private DoubleBufferedPanel drawFigurePanel;
     }
 }
 

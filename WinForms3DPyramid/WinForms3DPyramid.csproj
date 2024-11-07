@@ -46,20 +46,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Elements\DoubleBufferedPanel.cs">
+    <Compile Include="Controllers\FigureController.cs" />
+    <Compile Include="Controllers\IShapeDrawer.cs" />
+    <Compile Include="Controllers\PyramidDrawer.cs" />
+    <Compile Include="Models\Figure.cs" />
+    <Compile Include="Models\Point3D.cs" />
+    <Compile Include="Models\PyramidFactory.cs" />
+    <Compile Include="Models\Shape.cs" />
+    <Compile Include="Models\ShapeFactory.cs" />
+    <Compile Include="Views\DoubleBufferedPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Forms\MainForm.cs">
+    <Compile Include="Views\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\MainForm.Designer.cs">
+    <Compile Include="Views\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Classes\Pyramid.cs" />
-    <Compile Include="Classes\ShapeDrawer.cs" />
-    <EmbeddedResource Include="Forms\MainForm.resx">
+    <Compile Include="Models\Pyramid.cs" />
+    <EmbeddedResource Include="Views\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
