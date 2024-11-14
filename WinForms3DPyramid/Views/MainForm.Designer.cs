@@ -36,7 +36,7 @@
             this.drawFigurePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.drawFigurePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.drawFigurePanel.Location = new System.Drawing.Point(12, 12);
+            this.drawFigurePanel.Location = new System.Drawing.Point(12, 38);
             this.drawFigurePanel.Name = "drawFigurePanel";
             this.drawFigurePanel.Size = new System.Drawing.Size(800, 450);
             this.drawFigurePanel.TabIndex = 0;

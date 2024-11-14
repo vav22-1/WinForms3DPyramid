@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WinForms3DPyramid.Controllers
+namespace WinForms3DPyramid
 {
-    public class PyramidDrawer : IShapeDrawer
+    public class CubeDrawer : IShapeDrawer
     {
         //Константа, определяющая "дистанцию" до фигуры
         private const float ProjectDistance = 600f;
@@ -41,9 +41,9 @@ namespace WinForms3DPyramid.Controllers
 
         //Метод, создающий массив 2D координат вершин пирамиды с помощью метода Get2DCoords
         //Точки устанавливаются относительно центра рисуемой области 
-        public PointF[] GetVertices(Shape pyramid)
+        public PointF[] GetVertices(Shape cube)
         {
-            List<Point3D> points = pyramid.GetPoints();
+            List<Point3D> points = cube.GetPoints();
             PointF[] vertices = new PointF[points.Count];
             float centerX = drawPanelSize.Width / 2f;
             float centerY = drawPanelSize.Height / 2f;
@@ -57,26 +57,27 @@ namespace WinForms3DPyramid.Controllers
             return vertices;
         }
 
-        //Метод, рисующий линии между всеми вершинами пирамиды 
-        public void DrawShape(Graphics g, Shape pyramid, Pen color)
+        //Метод, рисующий линии между всеми вершинами куба
+        public void DrawShape(Graphics g, Shape cube, Pen color)
         {
-            PointF[] vertices = GetVertices(pyramid);
-            for (int i = 1; i < vertices.Length; i++)
-            {
-                g.DrawLine(color, vertices[0], vertices[i]);
-            }
-            int[] verticesIndices = pyramid.GetVerticesConnectionIndices();
+            int[] verticesIndices = cube.GetVerticesConnectionIndices();
+            PointF[] vertices = GetVertices(cube);
             for (int i = 0; i < verticesIndices.Length - 1; i++)
             {
                 g.DrawLine(color, vertices[verticesIndices[i]], vertices[verticesIndices[i + 1]]);
+                g.DrawLine(color, vertices[verticesIndices[i]+4], vertices[verticesIndices[i + 1]+4]);
+            }
+            for (int i = 4; i < vertices.Length; i++)
+            {
+                g.DrawLine(color, vertices[i-4], vertices[i]);
             }
         }
 
-        //Метод для соединения соответствующих вершин внутренней и внешней пирамиды
-        public void ConnectVertices(Graphics g, Shape pyramidOne, Shape pyramidTwo, Pen color)
+        //Метод для соединения соответствующих вершин внутреннего и внешнего куба
+        public void ConnectVertices(Graphics g, Shape cubeOne, Shape cubeTwo, Pen color)
         {
-            PointF[] verticesOne = GetVertices(pyramidOne);
-            PointF[] verticesTwo = GetVertices(pyramidTwo);
+            PointF[] verticesOne = GetVertices(cubeOne);
+            PointF[] verticesTwo = GetVertices(cubeTwo);
             for (int i = 0; i < verticesOne.Length; i++)
             {
                 g.DrawLine(color, verticesOne[i], verticesTwo[i]);
@@ -84,24 +85,24 @@ namespace WinForms3DPyramid.Controllers
         }
 
 
-        //Public метод для рисования двух пирамид с соединением соответствующих вершин
+        //Public метод для рисования двух кубов с соединением соответствующих вершин
         public void DrawFigure(Graphics g, Figure figure)
         {
-            foreach (Pyramid pyramid in figure.GetShapes().OfType<Pyramid>())
+            foreach (Cube cube in figure.GetShapes().OfType<Cube>())
             {
-                DrawShape(g, pyramid, Pens.Black);
+                DrawShape(g, cube, Pens.Black);
             }
-            List<Pyramid> pyramids = figure.GetShapes().OfType<Pyramid>().ToList();
+            List<Cube> pyramids = figure.GetShapes().OfType<Cube>().ToList(); ;
             for (int i = 1; i < pyramids.Count; i++)
             {
                 ConnectVertices(g, pyramids[i - 1], pyramids[i], Pens.BlueViolet);
             }
         }
 
-        //Метод поворота пирамиды по осям с помощью соответствующих матриц поворота
-        public void RotateShape(Shape pyramid, float radians, char axis)
+        //Метод поворота куба по осям с помощью соответствующих матриц поворота
+        public void RotateShape(Shape cube, float radians, char axis)
         {
-            List<Point3D> points = pyramid.GetPoints();
+            List<Point3D> points = cube.GetPoints();
             float cosTheta = (float)Math.Cos(radians);
             float sinTheta = (float)Math.Sin(radians);
 
@@ -133,9 +134,9 @@ namespace WinForms3DPyramid.Controllers
             {
                 float angle = rotateFactor ? 1f : -1f;
                 float radians = angle * (float)Math.PI / 180f;
-                foreach (Pyramid pyramid in figure.GetShapes().OfType<Pyramid>())
+                foreach (Cube cube in figure.GetShapes().OfType<Cube>())
                 {
-                    RotateShape(pyramid, radians, axis);
+                    RotateShape(cube, radians, axis);
                 }
             });
         }

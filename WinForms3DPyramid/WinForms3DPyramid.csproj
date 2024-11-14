@@ -46,9 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\CubeDrawer.cs" />
     <Compile Include="Controllers\FigureController.cs" />
     <Compile Include="Controllers\IShapeDrawer.cs" />
     <Compile Include="Controllers\PyramidDrawer.cs" />
+    <Compile Include="Models\Cube.cs" />
+    <Compile Include="Models\CubeFactory.cs" />
     <Compile Include="Models\Figure.cs" />
     <Compile Include="Models\Point3D.cs" />
     <Compile Include="Models\PyramidFactory.cs" />

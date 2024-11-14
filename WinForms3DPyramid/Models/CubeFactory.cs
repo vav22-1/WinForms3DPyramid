@@ -1,10 +1,10 @@
 ﻿namespace WinForms3DPyramid
 {
-    public class PyramidFactory : ShapeFactory
+    public class CubeFactory : ShapeFactory
     {
         public override Shape CreateShape(float scale)
         {
-            return new Pyramid(scale);
+            return new Cube(scale);
         }
     }
 }

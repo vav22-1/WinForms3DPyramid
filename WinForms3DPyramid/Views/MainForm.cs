@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Net.Configuration;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using WinForms3DPyramid.Models;
 
 namespace WinForms3DPyramid
 {
@@ -12,11 +9,24 @@ namespace WinForms3DPyramid
     {
         private Size baseFormSize;
         private Dictionary<Control, (int elementWidth, int elementHeight)> elementsToScale;
+        private FigureController figureController;
 
         public MainForm()
         {
             InitializeComponent();
             baseFormSize = Size;
+
+            MenuStrip menuStrip = new MenuStrip();
+            ToolStripMenuItem shapeMenuItem = new ToolStripMenuItem("Фигуры");
+            ToolStripMenuItem cubeMenuItem = new ToolStripMenuItem("Куб");
+            ToolStripMenuItem pyramidMenuItem = new ToolStripMenuItem("Пирамида");
+            cubeMenuItem.Click += (sender, args) => SwitchFactory(new CubeFactory());
+            pyramidMenuItem.Click += (sender, args) => SwitchFactory(new PyramidFactory());
+            shapeMenuItem.DropDownItems.Add(cubeMenuItem);
+            shapeMenuItem.DropDownItems.Add(pyramidMenuItem);
+            menuStrip.Items.Add(shapeMenuItem);
+            this.MainMenuStrip = menuStrip;
+            this.Controls.Add(menuStrip);
 
             //Установка стиля отрисовки формы для предотвращения мерцания фигуры при использовании Invalidate()
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
@@ -28,9 +38,9 @@ namespace WinForms3DPyramid
             {
                 {drawFigurePanel, (drawFigurePanel.Width, drawFigurePanel.Height)}
             };
-
+            
             ShapeFactory factory = new PyramidFactory();
-            FigureController figureController = new FigureController(new Figure(factory), this, drawFigurePanel);
+            figureController = new FigureController(new Figure(factory), this, drawFigurePanel);
         }
 
         //Скалирование элементов при изменении размера формы
@@ -49,6 +59,13 @@ namespace WinForms3DPyramid
                 control.Key.Width = (int)(control.Value.elementWidth * widthRatio);
                 control.Key.Height = (int)(control.Value.elementHeight * heightRatio);
             }
+        }
+        //Метод, меняющий фабрику при выборе другой фигуры
+        private void SwitchFactory(ShapeFactory factory)
+        {
+            var newFigure = new Figure(factory);
+            figureController.SetFigure(newFigure);
+            drawFigurePanel.Invalidate();
         }
     }
 }

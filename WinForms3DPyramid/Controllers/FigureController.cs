@@ -10,7 +10,7 @@ namespace WinForms3DPyramid
         private Figure figure;
         private Form form;
         private DoubleBufferedPanel drawPanel;
-        private PyramidDrawer pyramidDrawer;
+        private IShapeDrawer figureDrawer;
 
         //Переменная коэффициента приближения
         private float zoomFactor = 1f;
@@ -50,29 +50,38 @@ namespace WinForms3DPyramid
             figure = mainFigure;
             form = mainForm;
             this.drawPanel = drawPanel;
-            pyramidDrawer = new PyramidDrawer();
-            pyramidDrawer.SetBaseClientSize(drawPanel.ClientSize);
+            switch (mainFigure.GetShapeType().Name)
+            {
+                case nameof(Pyramid):
+                    figureDrawer = new PyramidDrawer();
+                    break;
+                case nameof(Cube):
+                    figureDrawer = new CubeDrawer();
+                    break;
+
+            }
+            figureDrawer.SetBaseClientSize(drawPanel.ClientSize);
             form.KeyPreview = true;
 
             //Определение таймеров вращения фигуры по осям
             xRotationTimer = new Timer();
             xRotationTimer.Tick += (s, e) =>
             {
-                pyramidDrawer.RotateFigure(figure, 'X', xRotateFactor);
+                figureDrawer.RotateFigure(figure, 'X', xRotateFactor);
                 drawPanel.Invalidate();
             };
 
             yRotationTimer = new Timer();
             yRotationTimer.Tick += (s, e) =>
             {
-                pyramidDrawer.RotateFigure(figure, 'Y', yRotateFactor);
+                figureDrawer.RotateFigure(figure, 'Y', yRotateFactor);
                 drawPanel.Invalidate();
             };
 
             zRotationTimer = new Timer();
             zRotationTimer.Tick += (s, e) =>
             {
-                pyramidDrawer.RotateFigure(figure, 'Z', zRotateFactor);
+                figureDrawer.RotateFigure(figure, 'Z', zRotateFactor);
                 drawPanel.Invalidate();
             };
             SetTimers();
@@ -87,6 +96,23 @@ namespace WinForms3DPyramid
             drawPanel.MouseMove += MouseMove;
             drawPanel.Resize += Resize;
             drawPanel.Paint += OnPanelPaint;
+            drawPanel.Invalidate();
+        }
+        public void SetFigure(Figure newFigure)
+        {
+            figure = newFigure;
+
+            switch (newFigure.GetShapeType().Name)
+            {
+                case nameof(Pyramid):
+                    figureDrawer = new PyramidDrawer();
+                    break;
+                case nameof(Cube):
+                    figureDrawer = new CubeDrawer();
+                    break;
+            }
+
+            figureDrawer.SetBaseClientSize(drawPanel.ClientSize);
             drawPanel.Invalidate();
         }
 
@@ -198,8 +224,8 @@ namespace WinForms3DPyramid
                 //Поворот фигуры в зависимости от смещения мыши
                 foreach (Shape shapes in figure.GetShapes())
                 {
-                    pyramidDrawer.RotateShape(shapes, deltaY * mouseRotationSpeed, 'X');
-                    pyramidDrawer.RotateShape(shapes, deltaX * mouseRotationSpeed, 'Y');
+                    figureDrawer.RotateShape(shapes, deltaY * mouseRotationSpeed, 'X');
+                    figureDrawer.RotateShape(shapes, deltaX * mouseRotationSpeed, 'Y');
                 }
 
                 lastMousePosition = e.Location;
@@ -232,14 +258,14 @@ namespace WinForms3DPyramid
         private void OnPanelPaint(object sender, PaintEventArgs e)
         {
             //Обновление размера окна
-            pyramidDrawer.SetClientSize(drawPanel.ClientSize);
+            figureDrawer.SetClientSize(drawPanel.ClientSize);
             //Перемещение изображения внутри элемента drawPyramidPanel
             e.Graphics.TranslateTransform(newMousePosition.X, newMousePosition.Y);
 
             //Масштабирование изображения с помощью переменной zoomFactor
             e.Graphics.ScaleTransform(zoomFactor, zoomFactor);
 
-            pyramidDrawer.DrawFigure(e.Graphics, figure);
+            figureDrawer.DrawFigure(e.Graphics, figure);
         }
         //Метод для установления скорости вращения по осям
         private void SetTimers(int speed = 10)

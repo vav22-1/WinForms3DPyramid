@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Threading.Tasks;
 
 namespace WinForms3DPyramid
 {
@@ -9,7 +10,7 @@ namespace WinForms3DPyramid
         PointF Get2DCoords(Point3D point);
 
         PointF[] GetVertices(Shape pyramid);
-        void DrawPyramid(Graphics g, Shape pyramid, Pen color);
+        void DrawShape(Graphics g, Shape pyramid, Pen color);
 
         void ConnectVertices(Graphics g, Shape pyramidOne, Shape pyramidTwo, Pen color);
 
@@ -17,5 +18,6 @@ namespace WinForms3DPyramid
 
         void RotateShape(Shape pyramid, float radians, char axis);
 
+        Task RotateFigure(Figure figure, char axis, bool rotateFactor);
     }
 }
