@@ -200,19 +200,18 @@ namespace WinForms3DPyramid
         {
             if (isMouseMovePyramid)
             {
-                //Получение значений перемещения мыши по осям x и y
+                //Получение значений перемещения мыши по осям X и Y
                 newMousePosition.X += e.Location.X - lastMousePosition.X;
                 newMousePosition.Y += e.Location.Y - lastMousePosition.Y;
 
                 lastMousePosition = e.Location;
 
-                //Ограничение перемещения, чтобы пользователь не мог переместиться слишком далеко от фигуры и потерять её
+                //Ограничение перемещения, чтобы фигура не выходила за пределы панели
                 float maxOffsetX = (float)drawPanel.ClientSize.Width / 2;
                 float maxOffsetY = (float)drawPanel.ClientSize.Height / 2;
-                float moveFactor = 1f + (1f - zoomFactor);
+                newMousePosition.X = Math.Min(Math.Max(newMousePosition.X, -maxOffsetX), maxOffsetX);
+                newMousePosition.Y = Math.Min(Math.Max(newMousePosition.Y, -maxOffsetY), maxOffsetY);
 
-                newMousePosition.X = Math.Max(Math.Min(newMousePosition.X, maxOffsetX * moveFactor), -maxOffsetX * zoomFactor);
-                newMousePosition.Y = Math.Max(Math.Min(newMousePosition.Y, maxOffsetY * moveFactor), -maxOffsetY * zoomFactor);
                 drawPanel.Invalidate();
             }
             else if (isRightMouseButtonPressed)
@@ -257,16 +256,24 @@ namespace WinForms3DPyramid
 
         private void OnPanelPaint(object sender, PaintEventArgs e)
         {
-            //Обновление размера окна
             figureDrawer.SetClientSize(drawPanel.ClientSize);
+            float panelCenterX = drawPanel.ClientSize.Width / 2f;
+            float panelCenterY = drawPanel.ClientSize.Height / 2f;
+
+            e.Graphics.TranslateTransform(panelCenterX, panelCenterY);
+
             //Перемещение изображения внутри элемента drawPyramidPanel
             e.Graphics.TranslateTransform(newMousePosition.X, newMousePosition.Y);
 
             //Масштабирование изображения с помощью переменной zoomFactor
             e.Graphics.ScaleTransform(zoomFactor, zoomFactor);
 
+            //Возврат трансформации обратно к центру панели
+            e.Graphics.TranslateTransform(-panelCenterX, -panelCenterY);
+
             figureDrawer.DrawFigure(e.Graphics, figure);
         }
+
         //Метод для установления скорости вращения по осям
         private void SetTimers(int speed = 10)
         {
