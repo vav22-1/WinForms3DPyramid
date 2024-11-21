@@ -97,47 +97,5 @@ namespace WinForms3DPyramid.Controllers
                 ConnectVertices(g, pyramids[i - 1], pyramids[i], Pens.BlueViolet);
             }
         }
-
-        //Метод поворота пирамиды по осям с помощью соответствующих матриц поворота
-        public void RotateShape(Shape pyramid, float radians, char axis)
-        {
-            List<Point3D> points = pyramid.GetPoints();
-            float cosTheta = (float)Math.Cos(radians);
-            float sinTheta = (float)Math.Sin(radians);
-
-            for (int i = 0; i < points.Count; i++)
-            {
-                float x = points[i].GetX();
-                float y = points[i].GetY();
-                float z = points[i].GetZ();
-
-                switch (axis)
-                {
-                    case 'X':
-                        points[i] = new Point3D(x, y * cosTheta - z * sinTheta, y * sinTheta + z * cosTheta);
-                        break;
-                    case 'Y':
-                        points[i] = new Point3D(x * cosTheta + z * sinTheta, y, -x * sinTheta + z * cosTheta);
-                        break;
-                    case 'Z':
-                        points[i] = new Point3D(x * cosTheta - y * sinTheta, x * sinTheta + y * cosTheta, z);
-                        break;
-                }
-            }
-        }
-
-        //Асинхронный метод для поворота всей фигуры по осям
-        public async Task RotateFigure(Figure figure, char axis, bool rotateFactor)
-        {
-            await Task.Run(() =>
-            {
-                float angle = rotateFactor ? 1f : -1f;
-                float radians = angle * (float)Math.PI / 180f;
-                foreach (Pyramid pyramid in figure.GetShapes().OfType<Pyramid>())
-                {
-                    RotateShape(pyramid, radians, axis);
-                }
-            });
-        }
     }
 }

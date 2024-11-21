@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinForms3DPyramid.Controllers;
 
@@ -24,32 +26,30 @@ namespace WinForms3DPyramid
         //Переменная, хранящая изменение положения мыши внутри элемента drawPyramidPanel
         private PointF newMousePosition;
 
+
         //Переменные, определяющие, вращается ли фигура по оси положительно или отрицательно
         private bool xRotateFactor;
         private bool yRotateFactor;
         private bool zRotateFactor;
 
-        //Таймеры вращения фигуры по каждой оси
-        private Timer xRotationTimer;
-        private Timer yRotationTimer;
-        private Timer zRotationTimer;
-
         //Логическая переменная, хранящее значение, вращается ли фигура на данный момент
         private bool isFigureRotate = false;
 
-        //Переменная, хранящая интервал таймеров вращения или же скорость вращения
-        private int rotationSpeed = 10;
+        //Переменная, хранящая скорость вращения
+        private float rotationSpeed = 1f;
 
         //Переменные для поворота фигуры с помощью правой кнопки мыши
         private bool isRightMouseButtonPressed = false;
 
-        //Переменная для изменения скорости вращения фигуры с помощью мыши
-        private float mouseRotationSpeed = 0.01f;
-        public FigureController(Figure mainFigure, Form mainForm, DoubleBufferedPanel drawPanel)
+        private TrackBar rotationSpeedTrackBar;
+        private bool isChangingByKeyboard = false;
+
+        public FigureController(Figure mainFigure, Form mainForm, DoubleBufferedPanel drawPanel, TrackBar trackBar)
         {
             figure = mainFigure;
             form = mainForm;
             this.drawPanel = drawPanel;
+            rotationSpeedTrackBar = trackBar;
             switch (mainFigure.GetShapeType().Name)
             {
                 case nameof(Pyramid):
@@ -62,30 +62,6 @@ namespace WinForms3DPyramid
             }
             figureDrawer.SetBaseClientSize(drawPanel.ClientSize);
             form.KeyPreview = true;
-
-            //Определение таймеров вращения фигуры по осям
-            xRotationTimer = new Timer();
-            xRotationTimer.Tick += (s, e) =>
-            {
-                figureDrawer.RotateFigure(figure, 'X', xRotateFactor);
-                drawPanel.Invalidate();
-            };
-
-            yRotationTimer = new Timer();
-            yRotationTimer.Tick += (s, e) =>
-            {
-                figureDrawer.RotateFigure(figure, 'Y', yRotateFactor);
-                drawPanel.Invalidate();
-            };
-
-            zRotationTimer = new Timer();
-            zRotationTimer.Tick += (s, e) =>
-            {
-                figureDrawer.RotateFigure(figure, 'Z', zRotateFactor);
-                drawPanel.Invalidate();
-            };
-            SetTimers();
-
             form.KeyDown += FormKeyDown;
             form.KeyUp += FormKeyUp;
 
@@ -97,7 +73,11 @@ namespace WinForms3DPyramid
             drawPanel.Resize += Resize;
             drawPanel.Paint += OnPanelPaint;
             drawPanel.Invalidate();
+
+            rotationSpeedTrackBar.Scroll += RotationSpeedTrackBar_Scroll;
+            rotationSpeedTrackBar.ValueChanged += RotationSpeedTrackBar_ValueChanged;
         }
+
         public void SetFigure(Figure newFigure)
         {
             figure = newFigure;
@@ -122,10 +102,13 @@ namespace WinForms3DPyramid
             switch (e.KeyCode)
             {
                 case Keys.Space:
-                    TimersControl(!isFigureRotate);
+                    isFigureRotate = !isFigureRotate;
+                    if (isFigureRotate)
+                    {
+                        _ = RotateFigureAsync();
+                    }
                     break;
             }
-            isFigureRotate = xRotationTimer.Enabled || yRotationTimer.Enabled || zRotationTimer.Enabled;
         }
 
         //Событие нажатия клавиши клавиатуры для управления направлением вращения по отдельным осям, а также для увеличения и уменьшения скорости вращения
@@ -143,14 +126,14 @@ namespace WinForms3DPyramid
                     zRotateFactor = !zRotateFactor;
                     break;
                 case Keys.Up:
-                    rotationSpeed = Math.Max(1, rotationSpeed - 10);
-                    mouseRotationSpeed = Math.Min(mouseRotationSpeed + 0.005f, 0.1f);
-                    SetTimers(rotationSpeed);
+                    rotationSpeed = Math.Min(rotationSpeed + 0.1f, 3f);
+                    isChangingByKeyboard = true;
+                    rotationSpeedTrackBar.Value = (int)(rotationSpeed*100);
                     break;
                 case Keys.Down:
-                    rotationSpeed = Math.Min(rotationSpeed + 10, 100);
-                    mouseRotationSpeed = Math.Max(0.001f, mouseRotationSpeed - 0.005f);
-                    SetTimers(rotationSpeed);
+                    rotationSpeed = Math.Max(0.1f, rotationSpeed - 0.1f);
+                    isChangingByKeyboard = true;
+                    rotationSpeedTrackBar.Value = (int)(rotationSpeed * 100);
                     break;
             }
         }
@@ -217,41 +200,31 @@ namespace WinForms3DPyramid
             else if (isRightMouseButtonPressed)
             {
                 //Вычисление смещения мыши по осям X и Y
-                float deltaX = e.Location.X - lastMousePosition.X;
-                float deltaY = e.Location.Y - lastMousePosition.Y;
+                float deltaX = (e.Location.X - lastMousePosition.X) / 100f;
+                float deltaY = (e.Location.Y - lastMousePosition.Y) / 100f;
 
                 //Поворот фигуры в зависимости от смещения мыши
                 foreach (Shape shapes in figure.GetShapes())
                 {
-                    figureDrawer.RotateShape(shapes, deltaY * mouseRotationSpeed, 'X');
-                    figureDrawer.RotateShape(shapes, deltaX * mouseRotationSpeed, 'Y');
+                    RotateShape(shapes, deltaY, 'X');
+                    RotateShape(shapes, deltaX, 'Y');
                 }
 
                 lastMousePosition = e.Location;
                 drawPanel.Invalidate();
             }
         }
-        //Метод срабатывающий при изменении размера drawPyramidPanel для перерисовки пирамид
-        private void Resize(object sender, System.EventArgs e)
+
+        //Метод срабатывающий при изменении размера drawPyramidPanel для перерисовки фигуры
+        private void Resize(object sender, EventArgs e)
         {
+            float maxOffsetX = (float)drawPanel.ClientSize.Width / 2;
+            float maxOffsetY = (float)drawPanel.ClientSize.Height / 2;
+
+            newMousePosition.X = Math.Min(Math.Max(newMousePosition.X, -maxOffsetX), maxOffsetX);
+            newMousePosition.Y = Math.Min(Math.Max(newMousePosition.Y, -maxOffsetY), maxOffsetY);
+
             drawPanel.Invalidate();
-        }
-        //Метод для управления таймерами вращения
-        private void TimersControl(bool control)
-        {
-            if (control)
-            {
-                if (!xRotationTimer.Enabled) xRotationTimer.Start();
-                if (!yRotationTimer.Enabled) yRotationTimer.Start();
-                if (!zRotationTimer.Enabled) zRotationTimer.Start();
-            }
-            else
-            {
-                xRotationTimer.Stop();
-                yRotationTimer.Stop();
-                zRotationTimer.Stop();
-            }
-            isFigureRotate = control;
         }
 
         private void OnPanelPaint(object sender, PaintEventArgs e)
@@ -274,12 +247,96 @@ namespace WinForms3DPyramid
             figureDrawer.DrawFigure(e.Graphics, figure);
         }
 
-        //Метод для установления скорости вращения по осям
-        private void SetTimers(int speed = 10)
+        public void SetRotationSpeed(float speed)
         {
-            xRotationTimer.Interval = speed;
-            yRotationTimer.Interval = speed;
-            zRotationTimer.Interval = speed;
+            rotationSpeed = speed;
+        }
+        private void RotationSpeedTrackBar_Scroll(object sender, EventArgs e)
+        {
+            if (isChangingByKeyboard)
+            {
+                isChangingByKeyboard = false;
+                return;
+            }
+            rotationSpeed = (float)rotationSpeedTrackBar.Value/100f;
+        }
+
+        private void RotationSpeedTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            rotationSpeed = (float)rotationSpeedTrackBar.Value/100f;
+        }
+
+        //Асинхронный метод для поворота всей фигуры с учетом направления по соответствующей оси
+        public async Task RotateFigureAsync()
+        {
+            if (!isFigureRotate) return;
+            while (isFigureRotate)
+            {
+                float deltaX = xRotateFactor ? -rotationSpeed * (float)Math.PI / 180f : rotationSpeed * (float)Math.PI / 180f;
+                float deltaY = yRotateFactor ? -rotationSpeed * (float)Math.PI / 180f : rotationSpeed * (float)Math.PI / 180f;
+                float deltaZ = zRotateFactor ? -rotationSpeed * (float)Math.PI / 180f : rotationSpeed * (float)Math.PI / 180f;
+                foreach (Shape shape in figure.GetShapes())
+                {
+                    RotateShape(shape, deltaX, 'X');
+                    RotateShape(shape, deltaY, 'Y');
+                    RotateShape(shape, deltaZ, 'Z');
+                }
+
+                drawPanel.Invalidate();
+                await Task.Delay(10);
+            }
+        }
+        //Метод поворота трехмерной фигуры по осям с помощью соответствующих матриц поворота
+        public void RotateShape(Shape shape, float radians, char axis)
+        {
+            List<Point3D> points = shape.GetPoints();
+            float cosTheta = (float)Math.Cos(radians);
+            float sinTheta = (float)Math.Sin(radians);
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                float x = points[i].GetX();
+                float y = points[i].GetY();
+                float z = points[i].GetZ();
+
+                switch (axis)
+                {
+                    case 'X':
+                        points[i] = new Point3D(x, y * cosTheta - z * sinTheta, y * sinTheta + z * cosTheta);
+                        break;
+                    case 'Y':
+                        points[i] = new Point3D(x * cosTheta + z * sinTheta, y, -x * sinTheta + z * cosTheta);
+                        break;
+                    case 'Z':
+                        points[i] = new Point3D(x * cosTheta - y * sinTheta, x * sinTheta + y * cosTheta, z);
+                        break;
+                }
+            }
+        }
+        public void InverseShape(string axis)
+        {
+            switch(axis)
+            {
+                case "X":
+                    xRotateFactor = !xRotateFactor;
+                    break;
+                case "Y":
+                    yRotateFactor = !yRotateFactor;
+                    break;
+                case "Z":
+                    zRotateFactor = !zRotateFactor;
+                    break;
+            }
+        }
+        public void StartStopRotate(Button button)
+        {
+            isFigureRotate = !isFigureRotate;
+            button.Text = "Старт (Клавиша Пробел)";
+            if (isFigureRotate)
+            {
+                button.Text = "Стоп (Клавиша Пробел)";
+                _ = RotateFigureAsync();
+            }
         }
     }
 }

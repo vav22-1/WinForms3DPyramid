@@ -8,13 +8,14 @@ namespace WinForms3DPyramid
     public partial class MainForm : Form
     {
         private Size baseFormSize;
-        private Dictionary<Control, (int elementWidth, int elementHeight)> elementsToScale;
+        private Dictionary<Control, Padding> baseElementMargins;
         private FigureController figureController;
 
         public MainForm()
         {
             InitializeComponent();
             baseFormSize = Size;
+            rotationSpeedTrackBar.KeyDown += new KeyEventHandler(trackBar_KeyDown);
 
             MenuStrip menuStrip = new MenuStrip();
             ToolStripMenuItem shapeMenuItem = new ToolStripMenuItem("Фигуры");
@@ -25,39 +26,33 @@ namespace WinForms3DPyramid
             shapeMenuItem.DropDownItems.Add(cubeMenuItem);
             shapeMenuItem.DropDownItems.Add(pyramidMenuItem);
             menuStrip.Items.Add(shapeMenuItem);
-            this.MainMenuStrip = menuStrip;
             this.Controls.Add(menuStrip);
 
-            //Установка стиля отрисовки формы для предотвращения мерцания фигуры при использовании Invalidate()
-            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
-            UpdateStyles();
-
-
-            //Словарь для всех элементов формы, которые должны менять свой размер при изменении размера формы
-            elementsToScale = new Dictionary<Control, (int width, int height)>
+            //Словарь для всех элементов формы, который хранит их отступы
+            baseElementMargins = new Dictionary<Control, Padding>();
+            foreach (Control control in tableLayoutPanel.Controls)
             {
-                {drawFigurePanel, (drawFigurePanel.Width, drawFigurePanel.Height)}
-            };
-            
+                baseElementMargins[control] = control.Margin;
+            }
             ShapeFactory factory = new PyramidFactory();
-            figureController = new FigureController(new Figure(factory), this, drawFigurePanel);
+            figureController = new FigureController(new Figure(factory), this, drawFigurePanel, rotationSpeedTrackBar);
         }
-
-        //Скалирование элементов при изменении размера формы
         private void MainForm_Resize(object sender, EventArgs e)
         {
-            ScaleELements();
-        }
+            //Рассчёт масштабирующего коэффициента для ширины и высоты
+            float widthScale = (float)this.Width / baseFormSize.Width;
+            float heightScale = (float)this.Height / baseFormSize.Height;
 
-        //Метод для скалирования размеров элементов формы относительно изменения размеров самой формы
-        private void ScaleELements()
-        {
-            float widthRatio = (float)ClientSize.Width / baseFormSize.Width;
-            float heightRatio = (float)ClientSize.Height / baseFormSize.Height;
-            foreach (var control in elementsToScale)
+            //Масштабирование отступов в зависимости от текущего размера формы
+            foreach (Control control in tableLayoutPanel.Controls)
             {
-                control.Key.Width = (int)(control.Value.elementWidth * widthRatio);
-                control.Key.Height = (int)(control.Value.elementHeight * heightRatio);
+                Padding baseMargin = baseElementMargins[control];
+
+                int newLeft = (int)(baseMargin.Left * widthScale);
+                int newTop = (int)(baseMargin.Top * heightScale);
+                int newRight = (int)(baseMargin.Right * widthScale);
+                int newBottom = (int)(baseMargin.Bottom * heightScale);
+                control.Margin = new Padding(newLeft, newTop, newRight, newBottom);
             }
         }
         //Метод, меняющий фабрику при выборе другой фигуры
@@ -66,6 +61,43 @@ namespace WinForms3DPyramid
             var newFigure = new Figure(factory);
             figureController.SetFigure(newFigure);
             drawFigurePanel.Invalidate();
+        }
+        private void trackBar_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down || e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void fasterRotateButton_Click(object sender, EventArgs e)
+        {
+            rotationSpeedTrackBar.Value = Math.Min(rotationSpeedTrackBar.Value + 10, rotationSpeedTrackBar.Maximum);
+        }
+
+        private void slowerRotateButton_Click(object sender, EventArgs e)
+        {
+            rotationSpeedTrackBar.Value = Math.Min(Math.Max(rotationSpeedTrackBar.Value + 10, rotationSpeedTrackBar.Minimum), rotationSpeedTrackBar.Maximum);
+        }
+
+        private void InvertXButton_Click(object sender, EventArgs e)
+        {
+            figureController.InverseShape("X");
+        }
+
+        private void InvertYButton_Click(object sender, EventArgs e)
+        {
+            figureController.InverseShape("Y");
+        }
+
+        private void InvertZButton_Click(object sender, EventArgs e)
+        {
+            figureController.InverseShape("Z");
+        }
+
+        private void StartStopButton_Click(object sender, EventArgs e)
+        {
+            figureController.StartStopRotate(startStopButton);
         }
     }
 }

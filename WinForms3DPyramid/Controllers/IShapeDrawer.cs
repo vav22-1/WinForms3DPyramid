@@ -16,8 +16,5 @@ namespace WinForms3DPyramid
 
         void DrawFigure(Graphics g, Figure figure);
 
-        void RotateShape(Shape pyramid, float radians, char axis);
-
-        Task RotateFigure(Figure figure, char axis, bool rotateFactor);
     }
 }
