@@ -37,9 +37,12 @@ namespace WinForms3DPyramid
             this.fasterRotateButton = new System.Windows.Forms.Button();
             this.slowerRotateButton = new System.Windows.Forms.Button();
             this.startStopButton = new System.Windows.Forms.Button();
-            this.invertZButton = new System.Windows.Forms.Button();
-            this.invertYButton = new System.Windows.Forms.Button();
-            this.invertXButton = new System.Windows.Forms.Button();
+            this.zInvertCheckBox = new System.Windows.Forms.CheckBox();
+            this.yInvertCheckBox = new System.Windows.Forms.CheckBox();
+            this.xInvertCheckBox = new System.Windows.Forms.CheckBox();
+            this.rotateXAxisCheckBox = new System.Windows.Forms.CheckBox();
+            this.rotateYAxisCheckBox = new System.Windows.Forms.CheckBox();
+            this.rotateZAxisCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.rotationSpeedTrackBar)).BeginInit();
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
@@ -47,7 +50,7 @@ namespace WinForms3DPyramid
             // rotationSpeedTrackBar
             // 
             this.rotationSpeedTrackBar.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.rotationSpeedTrackBar.Location = new System.Drawing.Point(739, 69);
+            this.rotationSpeedTrackBar.Location = new System.Drawing.Point(739, 77);
             this.rotationSpeedTrackBar.Maximum = 300;
             this.rotationSpeedTrackBar.Minimum = 10;
             this.rotationSpeedTrackBar.Name = "rotationSpeedTrackBar";
@@ -60,28 +63,31 @@ namespace WinForms3DPyramid
             // tableLayoutPanel
             // 
             this.tableLayoutPanel.ColumnCount = 4;
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.61104F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.491F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.73109F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.95667F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.6692F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.54891F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.78951F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.99239F));
+            this.tableLayoutPanel.Controls.Add(this.xInvertCheckBox, 0, 3);
             this.tableLayoutPanel.Controls.Add(this.drawFigurePanel, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.rotationSpeedTrackBar, 3, 1);
             this.tableLayoutPanel.Controls.Add(this.fasterRotateButton, 3, 0);
             this.tableLayoutPanel.Controls.Add(this.slowerRotateButton, 3, 2);
             this.tableLayoutPanel.Controls.Add(this.startStopButton, 3, 3);
-            this.tableLayoutPanel.Controls.Add(this.invertZButton, 2, 3);
-            this.tableLayoutPanel.Controls.Add(this.invertYButton, 1, 3);
-            this.tableLayoutPanel.Controls.Add(this.invertXButton, 0, 3);
+            this.tableLayoutPanel.Controls.Add(this.zInvertCheckBox, 2, 3);
+            this.tableLayoutPanel.Controls.Add(this.yInvertCheckBox, 1, 3);
+            this.tableLayoutPanel.Controls.Add(this.rotateXAxisCheckBox, 0, 4);
+            this.tableLayoutPanel.Controls.Add(this.rotateYAxisCheckBox, 1, 4);
+            this.tableLayoutPanel.Controls.Add(this.rotateZAxisCheckBox, 2, 4);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
-            this.tableLayoutPanel.RowCount = 4;
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.25F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 62.85714F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10.03788F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15.34091F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel.RowCount = 5;
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.625669F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 69.16221F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.982175F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5.525846F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5.525846F));
             this.tableLayoutPanel.Size = new System.Drawing.Size(834, 561);
             this.tableLayoutPanel.TabIndex = 0;
             // 
@@ -94,7 +100,7 @@ namespace WinForms3DPyramid
             this.drawFigurePanel.Margin = new System.Windows.Forms.Padding(0);
             this.drawFigurePanel.Name = "drawFigurePanel";
             this.tableLayoutPanel.SetRowSpan(this.drawFigurePanel, 3);
-            this.drawFigurePanel.Size = new System.Drawing.Size(690, 473);
+            this.drawFigurePanel.Size = new System.Drawing.Size(690, 498);
             this.drawFigurePanel.TabIndex = 0;
             // 
             // fasterRotateButton
@@ -104,72 +110,120 @@ namespace WinForms3DPyramid
             this.fasterRotateButton.Location = new System.Drawing.Point(705, 3);
             this.fasterRotateButton.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
             this.fasterRotateButton.Name = "fasterRotateButton";
-            this.fasterRotateButton.Size = new System.Drawing.Size(114, 57);
+            this.fasterRotateButton.Size = new System.Drawing.Size(114, 48);
             this.fasterRotateButton.TabIndex = 1;
             this.fasterRotateButton.Text = "Ускорить вращение (Клавиша Вверх)";
             this.fasterRotateButton.UseVisualStyleBackColor = true;
-            this.fasterRotateButton.Click += new System.EventHandler(this.fasterRotateButton_Click);
+            this.fasterRotateButton.Click += new System.EventHandler(this.FasterRotateButton_Click);
             // 
             // slowerRotateButton
             // 
             this.slowerRotateButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.slowerRotateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.slowerRotateButton.Location = new System.Drawing.Point(705, 420);
+            this.slowerRotateButton.Location = new System.Drawing.Point(705, 445);
             this.slowerRotateButton.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
             this.slowerRotateButton.Name = "slowerRotateButton";
             this.slowerRotateButton.Size = new System.Drawing.Size(114, 50);
             this.slowerRotateButton.TabIndex = 2;
             this.slowerRotateButton.Text = "Замедлить вращение (Клавиша Вниз)";
             this.slowerRotateButton.UseVisualStyleBackColor = true;
-            this.slowerRotateButton.Click += new System.EventHandler(this.slowerRotateButton_Click);
+            this.slowerRotateButton.Click += new System.EventHandler(this.SlowerRotateButton_Click);
             // 
             // startStopButton
             // 
             this.startStopButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.startStopButton.Location = new System.Drawing.Point(705, 483);
+            this.startStopButton.Location = new System.Drawing.Point(705, 508);
             this.startStopButton.Margin = new System.Windows.Forms.Padding(15, 10, 15, 10);
             this.startStopButton.Name = "startStopButton";
-            this.startStopButton.Size = new System.Drawing.Size(114, 68);
+            this.tableLayoutPanel.SetRowSpan(this.startStopButton, 2);
+            this.startStopButton.Size = new System.Drawing.Size(114, 43);
             this.startStopButton.TabIndex = 3;
             this.startStopButton.Text = "Старт (Клавиша Пробел)";
             this.startStopButton.UseVisualStyleBackColor = true;
-            this.startStopButton.Click += new System.EventHandler(this.StartStopButton_Click);
             // 
-            // invertZButton
+            // zInvertCheckBox
             // 
-            this.invertZButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.invertZButton.Location = new System.Drawing.Point(479, 483);
-            this.invertZButton.Margin = new System.Windows.Forms.Padding(20, 10, 20, 10);
-            this.invertZButton.Name = "invertZButton";
-            this.invertZButton.Size = new System.Drawing.Size(191, 68);
-            this.invertZButton.TabIndex = 4;
-            this.invertZButton.Text = "Инвертировать по оси Z  (Клавиша Z)";
-            this.invertZButton.UseVisualStyleBackColor = true;
-            this.invertZButton.Click += new System.EventHandler(this.InvertZButton_Click);
+            this.zInvertCheckBox.AutoSize = true;
+            this.zInvertCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.zInvertCheckBox.Location = new System.Drawing.Point(489, 501);
+            this.zInvertCheckBox.Margin = new System.Windows.Forms.Padding(30, 3, 3, 3);
+            this.zInvertCheckBox.Name = "zInvertCheckBox";
+            this.zInvertCheckBox.Size = new System.Drawing.Size(198, 25);
+            this.zInvertCheckBox.TabIndex = 4;
+            this.zInvertCheckBox.Text = "Инвертировать Z";
+            this.zInvertCheckBox.UseVisualStyleBackColor = true;
+            this.zInvertCheckBox.CheckedChanged += new System.EventHandler(this.ZInvertCheckBox_CheckedChanged);
             // 
-            // invertYButton
+            // yInvertCheckBox
             // 
-            this.invertYButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.invertYButton.Location = new System.Drawing.Point(250, 483);
-            this.invertYButton.Margin = new System.Windows.Forms.Padding(20, 10, 20, 10);
-            this.invertYButton.Name = "invertYButton";
-            this.invertYButton.Size = new System.Drawing.Size(189, 68);
-            this.invertYButton.TabIndex = 5;
-            this.invertYButton.Text = "Инвертировать по оси Y (Клавиша Y)";
-            this.invertYButton.UseVisualStyleBackColor = true;
-            this.invertYButton.Click += new System.EventHandler(this.InvertYButton_Click);
+            this.yInvertCheckBox.AutoSize = true;
+            this.yInvertCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.yInvertCheckBox.Location = new System.Drawing.Point(260, 501);
+            this.yInvertCheckBox.Margin = new System.Windows.Forms.Padding(30, 3, 3, 3);
+            this.yInvertCheckBox.Name = "yInvertCheckBox";
+            this.yInvertCheckBox.Size = new System.Drawing.Size(196, 25);
+            this.yInvertCheckBox.TabIndex = 5;
+            this.yInvertCheckBox.Text = "Инвертировать Y";
+            this.yInvertCheckBox.UseVisualStyleBackColor = true;
+            this.yInvertCheckBox.CheckedChanged += new System.EventHandler(this.YInvertCheckBox_CheckedChanged);
             // 
-            // invertXButton
+            // xInvertCheckBox
             // 
-            this.invertXButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.invertXButton.Location = new System.Drawing.Point(20, 483);
-            this.invertXButton.Margin = new System.Windows.Forms.Padding(20, 10, 20, 10);
-            this.invertXButton.Name = "invertXButton";
-            this.invertXButton.Size = new System.Drawing.Size(190, 68);
-            this.invertXButton.TabIndex = 6;
-            this.invertXButton.Text = "Инвертировать по оси X (Клавиша X)";
-            this.invertXButton.UseVisualStyleBackColor = true;
-            this.invertXButton.Click += new System.EventHandler(this.InvertXButton_Click);
+            this.xInvertCheckBox.AutoSize = true;
+            this.xInvertCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.xInvertCheckBox.Location = new System.Drawing.Point(30, 501);
+            this.xInvertCheckBox.Margin = new System.Windows.Forms.Padding(30, 3, 3, 3);
+            this.xInvertCheckBox.Name = "xInvertCheckBox";
+            this.xInvertCheckBox.Size = new System.Drawing.Size(197, 25);
+            this.xInvertCheckBox.TabIndex = 6;
+            this.xInvertCheckBox.Text = "Инвертировать X";
+            this.xInvertCheckBox.UseVisualStyleBackColor = true;
+            this.xInvertCheckBox.CheckedChanged += new System.EventHandler(this.XInvertCheckBox_CheckedChanged);
+            // 
+            // rotateXAxisCheckBox
+            // 
+            this.rotateXAxisCheckBox.AutoSize = true;
+            this.rotateXAxisCheckBox.Checked = true;
+            this.rotateXAxisCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.rotateXAxisCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rotateXAxisCheckBox.Location = new System.Drawing.Point(30, 532);
+            this.rotateXAxisCheckBox.Margin = new System.Windows.Forms.Padding(30, 3, 3, 3);
+            this.rotateXAxisCheckBox.Name = "rotateXAxisCheckBox";
+            this.rotateXAxisCheckBox.Size = new System.Drawing.Size(197, 26);
+            this.rotateXAxisCheckBox.TabIndex = 7;
+            this.rotateXAxisCheckBox.Text = "Вращать по оси X";
+            this.rotateXAxisCheckBox.UseVisualStyleBackColor = true;
+            this.rotateXAxisCheckBox.CheckedChanged += new System.EventHandler(this.RotateXAxisCheckBox_CheckedChanged);
+            // 
+            // rotateYAxisCheckBox
+            // 
+            this.rotateYAxisCheckBox.AutoSize = true;
+            this.rotateYAxisCheckBox.Checked = true;
+            this.rotateYAxisCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.rotateYAxisCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rotateYAxisCheckBox.Location = new System.Drawing.Point(260, 532);
+            this.rotateYAxisCheckBox.Margin = new System.Windows.Forms.Padding(30, 3, 3, 3);
+            this.rotateYAxisCheckBox.Name = "rotateYAxisCheckBox";
+            this.rotateYAxisCheckBox.Size = new System.Drawing.Size(196, 26);
+            this.rotateYAxisCheckBox.TabIndex = 8;
+            this.rotateYAxisCheckBox.Text = "Вращать по оси Y";
+            this.rotateYAxisCheckBox.UseVisualStyleBackColor = true;
+            this.rotateYAxisCheckBox.CheckedChanged += new System.EventHandler(this.RotateYAxisCheckBox_CheckedChanged);
+            // 
+            // rotateZAxisCheckBox
+            // 
+            this.rotateZAxisCheckBox.AutoSize = true;
+            this.rotateZAxisCheckBox.Checked = true;
+            this.rotateZAxisCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.rotateZAxisCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rotateZAxisCheckBox.Location = new System.Drawing.Point(489, 532);
+            this.rotateZAxisCheckBox.Margin = new System.Windows.Forms.Padding(30, 3, 3, 3);
+            this.rotateZAxisCheckBox.Name = "rotateZAxisCheckBox";
+            this.rotateZAxisCheckBox.Size = new System.Drawing.Size(198, 26);
+            this.rotateZAxisCheckBox.TabIndex = 9;
+            this.rotateZAxisCheckBox.Text = "Вращать по оси Z";
+            this.rotateZAxisCheckBox.UseVisualStyleBackColor = true;
+            this.rotateZAxisCheckBox.CheckedChanged += new System.EventHandler(this.RotateZAxisCheckBox_CheckedChanged);
             // 
             // MainForm
             // 
@@ -196,9 +250,12 @@ namespace WinForms3DPyramid
         private Button fasterRotateButton;
         private Button slowerRotateButton;
         private Button startStopButton;
-        private Button invertZButton;
-        private Button invertYButton;
-        private Button invertXButton;
+        private CheckBox zInvertCheckBox;
+        private CheckBox yInvertCheckBox;
+        private CheckBox xInvertCheckBox;
+        private CheckBox rotateXAxisCheckBox;
+        private CheckBox rotateYAxisCheckBox;
+        private CheckBox rotateZAxisCheckBox;
     }
 }
 

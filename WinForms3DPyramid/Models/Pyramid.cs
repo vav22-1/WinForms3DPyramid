@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace WinForms3DPyramid
 {
@@ -20,6 +21,8 @@ namespace WinForms3DPyramid
                 new Point3D(-100, -100, -100),
             };
             points3D = new List<Point3D>();
+
+
             //Скалирования размера пирамиды
             foreach (var point in basePoints3D)
             {
@@ -30,5 +33,16 @@ namespace WinForms3DPyramid
         public override List<Point3D> GetPoints() => points3D;
 
         public override int[] GetVerticesConnectionIndices() => new int[] { 1, 2, 3, 4, 1 };
+        public override List<int[]> GetFaces()
+        {
+            return new List<int[]>
+        {
+            new int[] { 0, 1, 2 },
+            new int[] { 0, 2, 3 },
+            new int[] { 0, 3, 4 },
+            new int[] { 0, 4, 1 },
+            new int[] { 1, 2, 3, 4 }
+        };
+        }
     }
 }

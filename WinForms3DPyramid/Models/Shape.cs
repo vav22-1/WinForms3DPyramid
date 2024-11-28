@@ -6,5 +6,6 @@ namespace WinForms3DPyramid
     {
         public abstract List<Point3D> GetPoints();
         public abstract int[] GetVerticesConnectionIndices();
+        public abstract List<int[]> GetFaces();
     }
 }

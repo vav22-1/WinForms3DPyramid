@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace WinForms3DPyramid.Controllers
 {
@@ -58,8 +59,9 @@ namespace WinForms3DPyramid.Controllers
         }
 
         //Метод, рисующий линии между всеми вершинами пирамиды 
-        public void DrawShape(Graphics g, Shape pyramid, Pen color)
+        public void DrawShape(Graphics g, Shape pyramid, Pen color, Brush verticesColor)
         {
+            float pointSize = 5f;
             PointF[] vertices = GetVertices(pyramid);
             for (int i = 1; i < vertices.Length; i++)
             {
@@ -69,6 +71,10 @@ namespace WinForms3DPyramid.Controllers
             for (int i = 0; i < verticesIndices.Length - 1; i++)
             {
                 g.DrawLine(color, vertices[verticesIndices[i]], vertices[verticesIndices[i + 1]]);
+            }
+            foreach (var vertex in vertices)
+            {
+                g.FillEllipse(verticesColor, vertex.X - pointSize / 2, vertex.Y - pointSize / 2, pointSize, pointSize);
             }
         }
 
@@ -82,6 +88,23 @@ namespace WinForms3DPyramid.Controllers
                 g.DrawLine(color, verticesOne[i], verticesTwo[i]);
             }
         }
+        
+        //Рисование граней
+        public void DrawFaces(Graphics g, Shape pyramid, Brush facesBrush)
+        {
+            List<int[]> faces = pyramid.GetFaces();
+            PointF[] vertices = GetVertices(pyramid);
+
+            foreach (var face in faces)
+            {
+                PointF[] faceVertices = new PointF[face.Length];
+                for (int i = 0; i < face.Length; i++)
+                {
+                    faceVertices[i] = vertices[face[i]];
+                }
+                g.FillPolygon(facesBrush, faceVertices);
+            }
+        }
 
 
         //Public метод для рисования двух пирамид с соединением соответствующих вершин
@@ -89,13 +112,16 @@ namespace WinForms3DPyramid.Controllers
         {
             foreach (Pyramid pyramid in figure.GetShapes().OfType<Pyramid>())
             {
-                DrawShape(g, pyramid, Pens.Black);
+                DrawShape(g, pyramid, new Pen(figure.GetFigureColor().GetLinesColor()), new SolidBrush(figure.GetFigureColor().GetVerticesColor()));
+                DrawFaces(g, pyramid, new SolidBrush(figure.GetFigureColor().GetFacesColor()));
             }
+
             List<Pyramid> pyramids = figure.GetShapes().OfType<Pyramid>().ToList();
             for (int i = 1; i < pyramids.Count; i++)
             {
-                ConnectVertices(g, pyramids[i - 1], pyramids[i], Pens.BlueViolet);
+                ConnectVertices(g, pyramids[i - 1], pyramids[i], new Pen(figure.GetFigureColor().GetConnectionsColor()));
             }
+
         }
     }
 }

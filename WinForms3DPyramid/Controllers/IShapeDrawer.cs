@@ -10,7 +10,7 @@ namespace WinForms3DPyramid
         PointF Get2DCoords(Point3D point);
 
         PointF[] GetVertices(Shape pyramid);
-        void DrawShape(Graphics g, Shape pyramid, Pen color);
+        void DrawShape(Graphics g, Shape pyramid, Pen color, Brush verticesColor);
 
         void ConnectVertices(Graphics g, Shape pyramidOne, Shape pyramidTwo, Pen color);
 

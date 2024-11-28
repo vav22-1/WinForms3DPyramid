@@ -12,6 +12,7 @@ namespace WinForms3DPyramid
         private Figure figure;
         private Form form;
         private DoubleBufferedPanel drawPanel;
+        private Button startStopButton;
         private IShapeDrawer figureDrawer;
 
         //Переменная коэффициента приближения
@@ -44,12 +45,17 @@ namespace WinForms3DPyramid
         private TrackBar rotationSpeedTrackBar;
         private bool isChangingByKeyboard = false;
 
-        public FigureController(Figure mainFigure, Form mainForm, DoubleBufferedPanel drawPanel, TrackBar trackBar)
+        private bool xAxisRotate = true;
+        private bool yAxisRotate = true;
+        private bool zAxisRotate = true;
+
+        public FigureController(Figure mainFigure, Form mainForm, DoubleBufferedPanel drawPanel, TrackBar trackBar, Button startStopButton)
         {
             figure = mainFigure;
             form = mainForm;
             this.drawPanel = drawPanel;
             rotationSpeedTrackBar = trackBar;
+            this.startStopButton = startStopButton;
             switch (mainFigure.GetShapeType().Name)
             {
                 case nameof(Pyramid):
@@ -62,7 +68,6 @@ namespace WinForms3DPyramid
             }
             figureDrawer.SetBaseClientSize(drawPanel.ClientSize);
             form.KeyPreview = true;
-            form.KeyDown += FormKeyDown;
             form.KeyUp += FormKeyUp;
 
             //Создание обработчика события прокрутки колёсика мыши
@@ -76,6 +81,8 @@ namespace WinForms3DPyramid
 
             rotationSpeedTrackBar.Scroll += RotationSpeedTrackBar_Scroll;
             rotationSpeedTrackBar.ValueChanged += RotationSpeedTrackBar_ValueChanged;
+
+            startStopButton.Click += StartStopButton_Click;
         }
 
         public void SetFigure(Figure newFigure)
@@ -96,26 +103,14 @@ namespace WinForms3DPyramid
             drawPanel.Invalidate();
         }
 
-        //Событие нажатия клавиши клавиатуры для управления вращением фигуры как по отдельным осям, так и по всем трем одновременно
-        private void FormKeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.Space:
-                    isFigureRotate = !isFigureRotate;
-                    if (isFigureRotate)
-                    {
-                        _ = RotateFigureAsync();
-                    }
-                    break;
-            }
-        }
-
         //Событие нажатия клавиши клавиатуры для управления направлением вращения по отдельным осям, а также для увеличения и уменьшения скорости вращения
         private void FormKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
+                case Keys.Space:
+                    StartStopRotate();
+                    break;
                 case Keys.X:
                     xRotateFactor = !xRotateFactor;
                     break;
@@ -266,6 +261,11 @@ namespace WinForms3DPyramid
             rotationSpeed = (float)rotationSpeedTrackBar.Value/100f;
         }
 
+        private void StartStopButton_Click(object sender, EventArgs e)
+        {
+            StartStopRotate();
+        }
+
         //Асинхронный метод для поворота всей фигуры с учетом направления по соответствующей оси
         public async Task RotateFigureAsync()
         {
@@ -277,15 +277,16 @@ namespace WinForms3DPyramid
                 float deltaZ = zRotateFactor ? -rotationSpeed * (float)Math.PI / 180f : rotationSpeed * (float)Math.PI / 180f;
                 foreach (Shape shape in figure.GetShapes())
                 {
-                    RotateShape(shape, deltaX, 'X');
-                    RotateShape(shape, deltaY, 'Y');
-                    RotateShape(shape, deltaZ, 'Z');
+                    if (xAxisRotate) RotateShape(shape, deltaX, 'X');
+                    if (yAxisRotate) RotateShape(shape, deltaY, 'Y');
+                    if (zAxisRotate) RotateShape(shape, deltaZ, 'Z');
                 }
 
                 drawPanel.Invalidate();
                 await Task.Delay(10);
             }
         }
+
         //Метод поворота трехмерной фигуры по осям с помощью соответствующих матриц поворота
         public void RotateShape(Shape shape, float radians, char axis)
         {
@@ -328,15 +329,64 @@ namespace WinForms3DPyramid
                     break;
             }
         }
-        public void StartStopRotate(Button button)
+        public void StartStopRotateShape(string axis)
+        {
+            switch (axis)
+            {
+                case "X":
+                    xAxisRotate = !xAxisRotate;
+                    break;
+                case "Y":
+                    yAxisRotate = !yAxisRotate;
+                    break;
+                case "Z":
+                    zAxisRotate = !zAxisRotate;
+                    break;
+            }
+        }
+        public void StartStopRotate()
         {
             isFigureRotate = !isFigureRotate;
-            button.Text = "Старт (Клавиша Пробел)";
+            startStopButton.Text = isFigureRotate ? "Стоп (Клавиша Пробел)" : "Старт (Клавиша Пробел)";
             if (isFigureRotate)
             {
-                button.Text = "Стоп (Клавиша Пробел)";
                 _ = RotateFigureAsync();
             }
         }
+        public void ChangeFigureColor(string colorType)
+        {
+            using (var colorDialog = new ColorDialog())
+            {
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    Color selectedColor = colorDialog.Color;
+
+                    var selectAlphaForm = new SelectAlphaForm(selectedColor, (newColor) =>
+                    {
+                        switch (colorType)
+                        {
+                            case "lines":
+                                figure.GetFigureColor().SetLinesColor(newColor);
+                                break;
+                            case "connections":
+                                figure.GetFigureColor().SetConnectionsColor(newColor);
+                                break;
+                            case "vertices":
+                                figure.GetFigureColor().SetVerticesColor(newColor);
+                                break;
+                            case "faces":
+                                figure.GetFigureColor().SetFacesColor(newColor);
+                                break;
+                        }
+
+                        drawPanel.Invalidate();
+                    });
+
+                    selectAlphaForm.ShowDialog();
+                }
+            }
+        }
+
+
     }
 }

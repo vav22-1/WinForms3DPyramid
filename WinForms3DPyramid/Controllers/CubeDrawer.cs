@@ -58,8 +58,9 @@ namespace WinForms3DPyramid
         }
 
         //Метод, рисующий линии между всеми вершинами куба
-        public void DrawShape(Graphics g, Shape cube, Pen color)
+        public void DrawShape(Graphics g, Shape cube, Pen color, Brush verticesColor)
         {
+            float pointSize = 5f;
             int[] verticesIndices = cube.GetVerticesConnectionIndices();
             PointF[] vertices = GetVertices(cube);
             for (int i = 0; i < verticesIndices.Length - 1; i++)
@@ -70,6 +71,10 @@ namespace WinForms3DPyramid
             for (int i = 4; i < vertices.Length; i++)
             {
                 g.DrawLine(color, vertices[i-4], vertices[i]);
+            }
+            foreach (var vertex in vertices)
+            {
+                g.FillEllipse(verticesColor, vertex.X - pointSize / 2, vertex.Y - pointSize / 2, pointSize, pointSize);
             }
         }
 
@@ -84,18 +89,35 @@ namespace WinForms3DPyramid
             }
         }
 
+        //Рисование граней
+        public void DrawFaces(Graphics g, Shape pyramid, Brush facesBrush)
+        {
+            List<int[]> faces = pyramid.GetFaces();
+            PointF[] vertices = GetVertices(pyramid);
+
+            foreach (var face in faces)
+            {
+                PointF[] faceVertices = new PointF[face.Length];
+                for (int i = 0; i < face.Length; i++)
+                {
+                    faceVertices[i] = vertices[face[i]];
+                }
+                g.FillPolygon(facesBrush, faceVertices);
+            }
+        }
 
         //Public метод для рисования двух кубов с соединением соответствующих вершин
         public void DrawFigure(Graphics g, Figure figure)
         {
             foreach (Cube cube in figure.GetShapes().OfType<Cube>())
             {
-                DrawShape(g, cube, Pens.Black);
+                DrawShape(g, cube, new Pen(figure.GetFigureColor().GetLinesColor()), new SolidBrush(figure.GetFigureColor().GetVerticesColor()));
+                DrawFaces(g, cube, new SolidBrush(figure.GetFigureColor().GetFacesColor()));
             }
-            List<Cube> pyramids = figure.GetShapes().OfType<Cube>().ToList(); ;
+            List<Cube> pyramids = figure.GetShapes().OfType<Cube>().ToList();
             for (int i = 1; i < pyramids.Count; i++)
             {
-                ConnectVertices(g, pyramids[i - 1], pyramids[i], Pens.BlueViolet);
+                ConnectVertices(g, pyramids[i - 1], pyramids[i], new Pen(figure.GetFigureColor().GetConnectionsColor()));
             }
         }
     }
